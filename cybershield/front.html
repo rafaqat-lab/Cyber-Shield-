@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI // Security Core</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0f19; color: #e2e8f0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { max-width: 900px; width: 100%; }
+        header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #1e293b; padding-bottom: 20px; }
+        header h1 { color: #38bdf8; font-size: 2.5rem; letter-spacing: 2px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        header p { color: #94a3b8; margin-top: 5px; font-size: 0.95rem; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        
+        .card { background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transition: transform 0.2s, border-color 0.2s; }
+        .card:hover { transform: translateY(-2px); border-color: #38bdf8; }
+        .card h2 { font-size: 1.3rem; margin-bottom: 15px; color: #f1f5f9; border-left: 4px solid #38bdf8; padding-left: 10px; }
+        
+        .form-group { margin-bottom: 15px; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 12px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; transition: border 0.2s; }
+        input[type="text"]:focus { border-color: #38bdf8; }
+        input[type="file"] { cursor: pointer; }
+        
+        button { width: 100%; padding: 12px; background: #0284c7; border: none; border-radius: 8px; color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
+        button:hover { background: #0369a1; box-shadow: 0 0 15px rgba(3, 105, 161, 0.5); }
+        
+        .error-banner { background: #7f1d1d; border: 1px solid #f87171; color: #fca5a5; padding: 12px; border-radius: 8px; margin-top: 15px; display: none; font-size: 0.9rem; line-height: 1.4; }
+        
+        .results-section { background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 30px; display: none; margin-top: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.6); }
+        .results-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 15px; margin-bottom: 20px; }
+        .verdict-badge { padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .meta-item { background: #1f2937; padding: 12px; border-radius: 8px; border-left: 3px solid #64748b; }
+        .meta-item label { display: block; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+        .meta-item span { font-size: 0.95rem; font-weight: 500; word-break: break-all; }
+        
+        .logs-box { background: #020617; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; max-height: 200px; overflow-y: auto; }
+        .logs-box p { font-size: 0.85rem; color: #10b981; margin-bottom: 6px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>CYBERSHIELD AI</h1>
+        <p>Advanced Payload Analysis & Network Threat Intelligence System</p>
+    </header>
+
+    <div class="grid">
+        <div class="card">
+            <h2>File Integrity Scan</h2>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Max file capacity transmission: 25MB</p>
+            <form id="fileForm">
+                <div class="form-group">
+                    <input type="file" id="cyberFile" required>
+                </div>
+                <button type="submit" id="fileBtn">Execute Threat Scan</button>
+            </form>
+            <div id="fileError" class="error-banner"></div>
+        </div>
+
+        <div class="card">
+            <h2>Network URL Inspector</h2>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Performs active phishing and domain routing audits</p>
+            <form id="urlForm">
+                <div class="form-group">
+                    <input type="text" id="targetUrl" placeholder="Enter target path (e.g., domain.com or attack log)" required>
+                </div>
+                <button type="submit" id="urlBtn">Inspect Endpoint</button>
+            </form>
+            <div id="urlError" class="error-banner"></div>
+        </div>
+    </div>
+
+    <div id="resultsPanel" class="results-section">
+        <div class="results-header">
+            <h3 style="font-size: 1.2rem; color: #f1f5f9;">Diagnostic Verdict Matrix</h3>
+            <span id="resVerdict" class="verdict-badge">SAFE</span>
+        </div>
+
+        <div class="meta-grid">
+            <div class="meta-item">
+                <label>Analyzed Target</label>
+                <span id="resTarget">-</span>
+            </div>
+            <div class="meta-item">
+                <label>Structural Scale / Protocol</label>
+                <span id="resSize">-</span>
+            </div>
+            <div class="meta-item">
+                <label>Crypto Signature Hash</label>
+                <span id="resHash">-</span>
+            </div>
+            <div class="meta-item">
+                <label>Deception Probability</label>
+                <span id="resProb" style="color: #f59e0b; font-weight: bold;">0%</span>
+            </div>
+        </div>
+
+        <h4 style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase;">Kernel Activity Analysis Logs</h4>
+        <div id="resLogs" class="logs-box"></div>
+    </div>
+</div>
+
+<script>
+    const resultsPanel = document.getElementById('resultsPanel');
+
+    // Asynchronous network bridge configuration targeting Flask server
+    async function smartFetch(apiPath, fetchOptions) {
+        const primaryUrl = `http://127.0.0.1:8000${apiPath}`;
+        const backupUrl = `http://localhost:8000${apiPath}`;
+        
+        try {
+            return await fetch(primaryUrl, fetchOptions);
+        } catch (primaryError) {
+            console.warn("Primary route unserviceable. Trying local loopback tunnel fallback...");
+            try {
+                return await fetch(backupUrl, fetchOptions);
+            } catch (backupError) {
+                throw new Error("BRIDGE_CRASHED");
+            }
+        }
+    }
+
+    function displayOutput(data, targetName, sizeOrProtocol) {
+        document.getElementById('resTarget').innerText = targetName;
+        document.getElementById('resSize').innerText = sizeOrProtocol;
+        document.getElementById('resHash').innerText = data.hash;
+        document.getElementById('resProb').innerText = data.fakeProbability;
+        
+        const verdictEl = document.getElementById('resVerdict');
+        verdictEl.innerText = data.verdict;
+        verdictEl.style.backgroundColor = data.statusColor + '22';
+        verdictEl.style.color = data.statusColor;
+        verdictEl.style.border = `1px solid ${data.statusColor}`;
+
+        const logsBox = document.getElementById('resLogs');
+        logsBox.innerHTML = '';
+        
+        data.logs.forEach(log => {
+            const p = document.createElement('p');
+            if (log.includes("🔴") || log.includes("CRITICAL") || log.includes("ALERT") || log.includes("BLOCKED") || log.includes("REACTION")) {
+                p.style.color = "#ef4444"; 
+            } else if (log.includes("Note:") || log.includes("Alert:") || log.includes("Sandbox:") || log.includes("Warning:")) {
+                p.style.color = "#f59e0b";
+            } else {
+                p.style.color = "#10b981";
+            }
+            p.innerText = `[LOG] ${log}`;
+            logsBox.appendChild(p);
+        });
+
+        resultsPanel.style.display = 'block';
+        resultsPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Payload Scanner Execution Mapping
+    document.getElementById('fileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errDiv = document.getElementById('fileError');
+        const btn = document.getElementById('fileBtn');
+        errDiv.style.display = 'none';
+        btn.innerText = "Analyzing System Bytes...";
+        btn.disabled = true;
+        
+        const fileInput = document.getElementById('cyberFile');
+        const formData = new FormData();
+        formData.append('cyberFile', fileInput.files[0]);
+
+        try {
+            const res = await smartFetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if(data.success) {
+                displayOutput(data.fileDetails, data.fileDetails.originalName, data.fileDetails.size);
+            } else {
+                errDiv.innerText = data.message;
+                errDiv.style.display = 'block';
+            }
+        } catch (err) {
+            errDiv.innerHTML = "<strong>Bridge Connection Error:</strong><br>Unable to sync with back.py application. Ensure your Python terminal terminal process is live on Port 8000.";
+            errDiv.style.display = 'block';
+        } finally {
+            btn.innerText = "Execute Threat Scan";
+            btn.disabled = false;
+        }
+    });
+
+    // Traffic Auditor Execution Mapping
+    document.getElementById('urlForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errDiv = document.getElementById('urlError');
+        const btn = document.getElementById('urlBtn');
+        errDiv.style.display = 'none';
+        btn.innerText = "Auditing Network Path...";
+        btn.disabled = true;
+        
+        const targetUrl = document.getElementById('targetUrl').value;
+
+        try {
+            const res = await smartFetch('/api/scan-url', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetUrl })
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                displayOutput(data.details, data.details.target, "DYNAMIC_STREAM");
+            } else {
+                errDiv.innerText = data.message;
+                errDiv.style.display = 'block';
+            }
+        } catch (err) {
+            errDiv.innerHTML = "<strong>Network Transmission Failed:</strong><br>Could not ping analysis backend core. Verify that your Flask app process is active.";
+            errDiv.style.display = 'block';
+        } finally {
+            btn.innerText = "Inspect Endpoint";
+            btn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
