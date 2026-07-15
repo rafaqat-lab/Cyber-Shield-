@@ -3,7 +3,8 @@
 A simple full-stack demo app: a Flask backend that inspects uploaded files and
 target URLs using heuristic rules, and an HTML/JS frontend to interact with it.
 
-> ⚠️ **Note:** This is an educational / demo heuristic scanner. It does **not**
+> **Note**
+This is an educational / demo heuristic scanner. It does **not**
 > perform real antivirus scanning or genuine intrusion detection — the checks
 > (magic-byte header check, double-extension check, keyword matching) are
 > simplified illustrations of how such systems work, not production security.
@@ -56,7 +57,7 @@ python back.py
 You should see:
 
 ```
-🚀 CyberShield Network-IDPS Hardened Engine online on Port 8000
+ CyberShield Network-IDPS Hardened Engine online on Port 8000
  * Running on http://127.0.0.1:8000
 ```
 
